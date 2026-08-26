@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سامانه قرعه‌کشی پیشرفته - نسخه دسکتاپ</title>
+  <title>قرعه‌کشی تجهیزات و لوازم آرایشگری</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --bg-dark: #0a0c10;
-      --card-bg: rgba(22, 27, 34, 0.75);
+      --bg-dark: #090d16;
+      --card-bg: rgba(22, 27, 34, 0.8);
       --glass-border: rgba(255, 255, 255, 0.12);
       --accent-green: #2ea043;
-      --accent-neon-green: #00ff66;
+      --accent-neon: #00ff66;
       --accent-blue: #58a6ff;
-      --accent-purple: #a371f7;
       --accent-gold: #ffdf00;
       --accent-red: #da3633;
       --text-main: #f0f6fc;
@@ -35,7 +34,6 @@
       align-items: center;
     }
 
-    /* هدر اصلی */
     .app-header {
       width: 100%;
       max-width: 1400px;
@@ -51,11 +49,9 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .brand { display: flex; align-items: center; gap: 16px; }
     .brand h1 { margin: 0; font-size: 1.6rem; font-weight: 800; background: linear-gradient(90deg, #58a6ff, #a371f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .status-badge { background: rgba(46, 160, 67, 0.15); border: 1px solid var(--accent-green); color: var(--accent-neon-green); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .status-badge { background: rgba(46, 160, 67, 0.15); border: 1px solid var(--accent-green); color: var(--accent-neon); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
 
-    /* چیدمان اصلی دسکتاپ */
     .dashboard-grid {
       width: 100%;
       max-width: 1400px;
@@ -75,97 +71,49 @@
     }
 
     .panel-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-top: 0;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--glass-border);
-      padding-bottom: 12px;
+      font-size: 1.1rem; font-weight: 700; margin-top: 0; margin-bottom: 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;
     }
 
-    /* بخش گردونه مرکز */
-    .center-stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+    .center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
     .prize-banner {
       background: linear-gradient(135deg, rgba(255, 223, 0, 0.1), rgba(255, 150, 0, 0.05));
       border: 1px solid rgba(255, 223, 0, 0.3);
-      padding: 14px 32px;
-      border-radius: 50px;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--accent-gold);
-      margin-bottom: 24px;
-      box-shadow: 0 0 25px rgba(255, 223, 0, 0.15);
-      text-align: center;
+      padding: 14px 32px; border-radius: 50px;
+      font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);
+      margin-bottom: 24px; box-shadow: 0 0 25px rgba(255, 223, 0, 0.15); text-align: center;
     }
 
-    .wheel-wrapper {
-      position: relative;
-      width: 500px;
-      height: 500px;
-      margin: 10px 0;
-    }
+    .wheel-wrapper { position: relative; width: 500px; height: 500px; margin: 10px 0; }
 
     .wheel-pointer {
-      position: absolute;
-      top: -18px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
       width: 0; height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-top: 36px solid var(--accent-red);
-      z-index: 10;
+      border-left: 20px solid transparent; border-right: 20px solid transparent;
+      border-top: 36px solid var(--accent-red); z-index: 10;
       filter: drop-shadow(0 4px 10px rgba(218, 54, 51, 0.8));
     }
 
-    canvas#wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(88, 166, 255, 0.2);
-    }
+    canvas#wheel { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
 
-    /* فرم‌ها و دکمه‌ها */
     input {
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid var(--glass-border);
-      background: rgba(13, 17, 23, 0.7);
-      color: #fff;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-      outline: none;
-      transition: border 0.2s;
+      width: 100%; padding: 14px; border-radius: 14px;
+      border: 1px solid var(--glass-border); background: rgba(13, 17, 23, 0.7);
+      color: #fff; font-size: 0.95rem; margin-bottom: 12px; outline: none;
     }
 
     input:focus { border-color: var(--accent-blue); }
 
     button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      border: none;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s;
     }
 
     .btn-spin {
-      background: linear-gradient(135deg, var(--accent-green), var(--accent-neon-green));
-      color: #000;
-      font-size: 1.2rem;
-      margin-top: 20px;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-neon));
+      color: #000; font-size: 1.2rem; margin-top: 20px;
       box-shadow: 0 8px 25px rgba(0, 255, 102, 0.3);
     }
 
@@ -173,117 +121,84 @@
     .btn-action { background: var(--accent-blue); color: #fff; margin-bottom: 10px; }
     .btn-settings { background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: #fff; width: auto; padding: 10px 18px; }
 
-    /* لیست‌ها */
     ul { list-style: none; padding: 0; margin: 0; max-height: 420px; overflow-y: auto; }
-    ul::-webkit-scrollbar { width: 6px; }
-    ul::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-
     li {
-      background: rgba(13, 17, 23, 0.5);
-      border: 1px solid var(--glass-border);
-      padding: 12px 16px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.95rem;
+      background: rgba(13, 17, 23, 0.5); border: 1px solid var(--glass-border);
+      padding: 12px 16px; border-radius: 14px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;
     }
 
     .btn-delete {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: rgba(218, 54, 51, 0.2);
-      border: 1px solid rgba(218, 54, 51, 0.4);
-      color: var(--accent-red);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(218, 54, 51, 0.2); border: 1px solid rgba(218, 54, 51, 0.4);
+      color: var(--accent-red); cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
 
-    /* پاپ‌آپ برنده دسکتاپ */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(25px);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px);
+      z-index: 100; justify-content: center; align-items: center;
     }
 
     .modal-card {
       background: linear-gradient(145deg, rgba(22, 27, 34, 0.95), rgba(13, 17, 23, 0.95));
-      border: 1px solid var(--accent-gold);
-      padding: 40px;
-      border-radius: 30px;
-      text-align: center;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 0 60px rgba(255, 223, 0, 0.3);
-      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid var(--accent-gold); padding: 40px; border-radius: 30px;
+      text-align: center; max-width: 500px; width: 90%; box-shadow: 0 0 60px rgba(255, 223, 0, 0.3);
     }
 
-    @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
-    /* کشوی تنظیمات */
     .drawer {
       position: fixed; top: 0; left: -400px; width: 380px; height: 100vh;
-      background: rgba(13, 17, 23, 0.95);
-      backdrop-filter: blur(20px);
-      border-right: 1px solid var(--glass-border);
-      padding: 30px;
-      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 90;
+      background: rgba(13, 17, 23, 0.98); backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border); padding: 30px;
+      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 90;
     }
     .drawer.open { left: 0; }
   </style>
 </head>
 <body>
 
-  <!-- کشوی تنظیمات مدیر -->
+  <!-- کشوی تنظیمات امنیتی (فقط پس از ورود مدیر قابل دسترسی است) -->
   <div class="drawer" id="settings-drawer">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <h2>⚙️ تنظیمات مدیریت</h2>
       <button class="btn-delete" onclick="toggleDrawer()">✕</button>
     </div>
-    <label style="color: var(--text-sub); display: block; margin-bottom: 8px;">زمان چرخش گردونه (ثانیه):</label>
+    
+    <label style="color: var(--text-sub); display: block; margin-bottom: 8px;">زمان چرخش گردونه (ثانیه - حداکثر ۶۰):</label>
     <input type="number" id="spin-duration-input" value="45" min="5" max="60">
 
-    <label style="color: var(--text-sub); display: block; margin-top: 15px; margin-bottom: 8px;">تغییر رمز مدیر:</label>
-    <input type="password" id="admin-pass-input" placeholder="رمز جدید...">
+    <label style="color: var(--text-sub); display: block; margin-top: 15px; margin-bottom: 8px;">تغییر رمز عبور مدیر:</label>
+    <input type="password" id="admin-pass-input" placeholder="رمز عبور جدید...">
 
-    <button class="btn-action" onclick="saveSettings()" style="margin-top: 20px;">ذخیره تنظیمات</button>
+    <button class="btn-action" onclick="saveSettings()" style="margin-top: 20px;">ذخیره تغییرات</button>
   </div>
 
-  <!-- هدر بالای صفحه -->
   <header class="app-header">
     <div class="brand">
-      <h1>🎰 گردونه قرعه‌کشی اختصاصی</h1>
-      <span class="status-badge">🟢 سرور فعال (Live)</span>
+      <h1>✂️ قرعه‌کشی تجهیزات و لوازم آرایشگری</h1>
+      <span class="status-badge">🟢 آنلاین و لایو</span>
     </div>
     <div style="display: flex; gap: 12px;">
-      <button class="btn-settings" onclick="toggleDrawer()">⚙️ تنظیمات</button>
+      <button class="btn-settings" id="settings-btn" onclick="openProtectedSettings()" style="display: none;">⚙️ تنظیمات</button>
       <button class="btn-settings" id="login-toggle" onclick="loginAdmin()">ورود مدیر</button>
+      <button class="btn-settings" id="logout-btn" onclick="logoutAdmin()" style="display: none; background: rgba(218, 54, 51, 0.3);">خروج مدیر</button>
     </div>
   </header>
 
-  <!-- چیدمان ۳ ستونه دسکتاپ -->
   <main class="dashboard-grid">
 
-    <!-- ستون راست: لیست شرکت کنندگان -->
+    <!-- ستون لیست افراد -->
     <section class="panel">
       <h3 class="panel-title">
-        <span>📋 شرکت‌کنندگان</span>
+        <span>💈 افراد حاضر در قرعه‌کشی</span>
         <span id="active-count" style="color: var(--accent-blue);">0</span>
       </h3>
       <ul id="active-list"></ul>
     </section>
 
-    <!-- ستون وسط: گردونه و جایزه -->
+    <!-- ستون گردونه مرکزی -->
     <section class="panel center-stage" id="main-stage">
-      <div class="prize-banner" id="prize-header">🎁 جایزه: ۴۰,۰۰۰,۰۰۰ تومان</div>
+      <div class="prize-banner" id="prize-header">🎁 جایزه: ۴۰,۰۰۰,۰۰۰ تومان تجهیزات آرایشگری</div>
       
       <div class="wheel-wrapper">
         <div class="wheel-pointer"></div>
@@ -295,33 +210,31 @@
       </div>
     </section>
 
-    <!-- ستون چپ: پنل کنترل و بایگانی برندگان -->
+    <!-- ستون کنترلی مدیر و بایگانی -->
     <section class="panel">
-      <!-- پنل ورودی مدیر -->
       <div id="admin-panel" style="display: none; margin-bottom: 24px;">
-        <h3 class="panel-title" style="color: var(--accent-blue);">👑 کنترل مدیر</h3>
+        <h3 class="panel-title" style="color: var(--accent-blue);">👑 پنل مدیریت</h3>
         
-        <label style="font-size: 0.85rem; color: var(--text-sub);">مبلغ جایزه:</label>
-        <input type="text" id="prize-input" value="۴۰,۰۰۰,۰۰۰ تومان">
+        <label style="font-size: 0.85rem; color: var(--text-sub);">عنوان / مبلغ جایزه:</label>
+        <input type="text" id="prize-input" value="۴۰,۰۰۰,۰۰۰ تومان تجهیزات آرایشگری">
+        <button class="btn-action" onclick="updatePrizeText()" style="background: rgba(255,255,255,0.1); margin-bottom: 12px;">ثبت مبلغ جدید</button>
 
-        <label style="font-size: 0.85rem; color: var(--text-sub);">افزودن نام جدید:</label>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">افزودن نام فرد جدید:</label>
         <input type="text" id="new-name" placeholder="نام و نام خانوادگی...">
         <button class="btn-action" onclick="addMember()">+ افزودن به گردونه</button>
       </div>
 
-      <!-- لیست بایگانی -->
       <h3 class="panel-title">🏆 بایگانی برندگان</h3>
       <ul id="archive-list"></ul>
     </section>
 
   </main>
 
-  <!-- پاپ‌آپ برنده -->
   <div class="modal-overlay" id="winner-modal">
     <div class="modal-card">
       <div style="font-size: 4rem; margin-bottom: 10px;">🎉</div>
-      <h2 style="color: var(--accent-neon-green); font-size: 2rem; margin: 0 0 10px 0;" id="modal-winner-name">نام برنده</h2>
-      <p style="color: var(--accent-gold); font-size: 1.3rem; font-weight: bold; margin-bottom: 25px;" id="modal-winner-prize">مبلغ جایزه</p>
+      <h2 style="color: var(--accent-neon); font-size: 2rem; margin: 0 0 10px 0;" id="modal-winner-name">نام برنده</h2>
+      <p style="color: var(--accent-gold); font-size: 1.2rem; font-weight: bold; margin-bottom: 25px;" id="modal-winner-prize">مبلغ جایزه</p>
       <button class="btn-spin" onclick="closeWinnerModal()" style="font-size: 1rem; padding: 12px 30px;">تایید و بستن</button>
     </div>
   </div>
@@ -349,9 +262,9 @@
   let spinDuration = 45;
   let activeMembers = [];
   let archivedMembers = [];
-  let currentPrize = "۴۰,۰۰۰,۰۰۰ تومان";
+  let currentPrize = "۴۰,۰۰۰,۰۰۰ تومان تجهیزات آرایشگری";
+  let lastSpinTimestamp = 0;
 
-  // افکت صوتی گردونه
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   function playClickSound() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -368,42 +281,44 @@
     osc.stop(audioCtx.currentTime + 0.04);
   }
 
+  // همگام‌سازی واقعی و لایو بین تمام مرورگرها
   onValue(ref(db, 'lotteryData'), (snapshot) => {
     const data = snapshot.val();
     if (data) {
-      if (document.activeElement.id !== 'new-name' && document.activeElement.id !== 'prize-input') {
-        activeMembers = data.activeMembers || [];
-        archivedMembers = data.archivedMembers || [];
-        if (data.prize) {
-          currentPrize = data.prize;
-          document.getElementById('prize-header').innerText = `🎁 جایزه: ${currentPrize}`;
-        }
-        render();
-        drawWheel();
+      if (data.adminPass) ADMIN_PASS = data.adminPass;
+      if (data.spinDuration) spinDuration = data.spinDuration;
+      
+      activeMembers = data.activeMembers || [];
+      archivedMembers = data.archivedMembers || [];
+      
+      if (data.prize) {
+        currentPrize = data.prize;
+        document.getElementById('prize-header').innerText = `🎁 جایزه: ${currentPrize}`;
       }
 
-      if (data.currentWinner) {
-        startWheelSpin(data.winnerIndex, data.currentWinner, data.prize || currentPrize);
+      render();
+      drawWheel();
+
+      // شناسایی لایو چرخش گردونه در تمام مرورگرها
+      if (data.spinEvent && data.spinEvent.timestamp > lastSpinTimestamp) {
+        lastSpinTimestamp = data.spinEvent.timestamp;
+        startWheelSpin(data.spinEvent.winnerIndex, data.spinEvent.winnerName, data.spinEvent.prize);
       }
     }
   });
 
-  function pushToDatabase(winnerData = null) {
+  function pushToDatabase() {
     const payload = {
       activeMembers: activeMembers,
       archivedMembers: archivedMembers,
       prize: currentPrize,
-      adminKey: "594572",
-      timestamp: Date.now()
+      adminPass: ADMIN_PASS,
+      spinDuration: spinDuration,
+      lastUpdate: Date.now()
     };
-    if (winnerData) {
-      payload.currentWinner = winnerData.name;
-      payload.winnerIndex = winnerData.index;
-    }
     set(ref(db, 'lotteryData'), payload);
   }
 
-  // رسم گردونه حرفه‌ای HD
   const colors = ["#da3633", "#58a6ff", "#2ea043", "#d29922", "#a371f7", "#f0883e", "#38d4d0"];
   let startAngle = 0;
 
@@ -423,7 +338,7 @@
       ctx.fillStyle = "#8b949e";
       ctx.font = "bold 22px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("اسامی را اضافه کنید", 300, 305);
+      ctx.fillText("اسامی را وارد کنید", 300, 305);
       return;
     }
 
@@ -452,36 +367,68 @@
 
   window.toggleDrawer = function() { document.getElementById('settings-drawer').classList.toggle('open'); };
 
+  window.openProtectedSettings = function() {
+    if (isAdmin) {
+      toggleDrawer();
+    } else {
+      alert("دسترسی محدود! فقط مدیر سیستم می‌تواند وارد تنظیمات شود.");
+    }
+  };
+
   window.saveSettings = function() {
+    if (!isAdmin) return;
     const newPass = document.getElementById('admin-pass-input').value;
     const newDuration = parseInt(document.getElementById('spin-duration-input').value);
+    
     if (newPass.trim() !== '') ADMIN_PASS = newPass.trim();
     if (newDuration >= 5 && newDuration <= 60) spinDuration = newDuration;
-    alert("تنظیمات ذخیره شد!");
+    
+    pushToDatabase();
+    alert("تنظیمات امنیتی و زمان‌بندی ذخیره شد!");
     toggleDrawer();
   };
 
   window.loginAdmin = function() {
-    const pass = prompt("رمز مدیر را وارد کنید:");
+    const pass = prompt("رمز ورود مدیر را وارد کنید:");
     if (pass === ADMIN_PASS) {
       isAdmin = true;
       document.getElementById('admin-panel').style.display = 'block';
       document.getElementById('admin-spin-box').style.display = 'block';
+      document.getElementById('settings-btn').style.display = 'inline-block';
+      document.getElementById('logout-btn').style.display = 'inline-block';
       document.getElementById('login-toggle').style.display = 'none';
       render();
     } else if (pass !== null) {
-      alert("رمز اشتباه است!");
+      alert("رمز عبور اشتباه است!");
+    }
+  };
+
+  window.logoutAdmin = function() {
+    isAdmin = false;
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('admin-spin-box').style.display = 'none';
+    document.getElementById('settings-btn').style.display = 'none';
+    document.getElementById('logout-btn').style.display = 'none';
+    document.getElementById('login-toggle').style.display = 'inline-block';
+    render();
+  };
+
+  window.updatePrizeText = function() {
+    if (!isAdmin) return;
+    const prizeInput = document.getElementById('prize-input').value.trim();
+    if (prizeInput) {
+      currentPrize = prizeInput;
+      pushToDatabase();
     }
   };
 
   window.addMember = function() {
+    if (!isAdmin) return;
     const input = document.getElementById('new-name');
     const name = input.value.trim();
     if (name) {
       activeMembers.push(name);
       input.value = '';
-      render();
-      drawWheel();
       pushToDatabase();
     }
   };
@@ -489,30 +436,32 @@
   window.removeActiveMember = function(index) {
     if (!isAdmin) return;
     activeMembers.splice(index, 1);
-    render();
-    drawWheel();
     pushToDatabase();
   };
 
   window.removeArchivedMember = function(index) {
     if (!isAdmin) return;
     archivedMembers.splice(index, 1);
-    render();
     pushToDatabase();
   };
 
   window.triggerOnlineDraw = function() {
+    if (!isAdmin) return;
     if (activeMembers.length === 0) {
       alert("لیست شرکت کنندگان خالی است!");
       return;
     }
-    const prizeInput = document.getElementById('prize-input').value.trim();
-    if (prizeInput) currentPrize = prizeInput;
 
     const winnerIndex = Math.floor(Math.random() * activeMembers.length);
     const winner = activeMembers[winnerIndex];
 
-    pushToDatabase({ name: winner, index: winnerIndex });
+    // ارسال دیتای انیمیشن لایو برای همه کاربران متصل
+    set(ref(db, 'lotteryData/spinEvent'), {
+      winnerIndex: winnerIndex,
+      winnerName: winner,
+      prize: currentPrize,
+      timestamp: Date.now()
+    });
   };
 
   let isSpinning = false;
@@ -523,7 +472,7 @@
     const numOptions = activeMembers.length;
     const arcSize = (2 * Math.PI) / numOptions;
     const targetAngle = (3 * Math.PI / 2) - (winnerIndex * arcSize + arcSize / 2);
-    const extraRounds = 10 * 2 * Math.PI;
+    const extraRounds = 8 * 2 * Math.PI;
     const finalAngle = extraRounds + targetAngle;
 
     const startTime = Date.now();
@@ -548,23 +497,21 @@
         clearInterval(spinInterval);
         isSpinning = false;
 
-        const indexInActive = activeMembers.indexOf(winnerName);
-        if (indexInActive > -1) activeMembers.splice(indexInActive, 1);
-        
-        const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
-        archivedMembers.unshift({ name: winnerName, prize: prizeAmount, time: timeStr });
+        if (isAdmin) {
+          const indexInActive = activeMembers.indexOf(winnerName);
+          if (indexInActive > -1) activeMembers.splice(indexInActive, 1);
+          
+          const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+          archivedMembers.unshift({ name: winnerName, prize: prizeAmount, time: timeStr });
+          pushToDatabase();
+        }
 
-        render();
-        drawWheel();
-
-        // باز کردن پاپ‌آپ برنده
         document.getElementById('modal-winner-name').innerText = `🎉 برنده: ${winnerName}`;
         document.getElementById('modal-winner-prize').innerText = `💰 جایزه: ${prizeAmount}`;
         document.getElementById('winner-modal').style.display = 'flex';
 
         confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
 
-        // اسکرین‌شات اتوماتیک از مانیتور دسکتاپ
         setTimeout(() => {
           html2canvas(document.getElementById('main-stage')).then(canvas => {
             const link = document.createElement('a');
