@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قرعه‌کشی آنلاین و شفاف خانوادگی</title>
+  <title>قرعه‌کشی خانوادگی - خروجی خانه</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
     :root {
@@ -42,7 +42,7 @@
     h1 {
       font-size: 1.6rem;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       background: linear-gradient(to right, #60a5fa, #34d399);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -52,7 +52,7 @@
       font-size: 0.75rem;
       color: #34d399;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .card {
@@ -86,7 +86,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
     }
 
     input, button {
@@ -107,37 +106,14 @@
       font-weight: bold;
       border: none;
       cursor: pointer;
-      transition: transform 0.1s, background 0.2s;
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
+    button:hover { background: var(--accent-hover); }
+    .btn-admin { background: var(--primary); }
+    .btn-danger { background: #ef4444; width: auto; padding: 4px 10px; font-size: 0.8rem; margin: 0; }
+    .btn-clear-all { background: #dc2626; margin-top: 10px; }
 
-    button:hover {
-      background: var(--accent-hover);
-    }
-
-    .btn-admin {
-      background: var(--primary);
-    }
-
-    .btn-danger {
-      background: #ef4444;
-      padding: 4px 10px;
-      width: auto;
-      font-size: 0.8rem;
-      margin: 0;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 180px;
-      overflow-y: auto;
-    }
-
+    ul { list-style: none; padding: 0; margin: 0; max-height: 180px; overflow-y: auto; }
     li {
       background: rgba(255, 255, 255, 0.03);
       padding: 10px 14px;
@@ -157,42 +133,34 @@
       border-radius: 12px;
     }
 
-    .footer {
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .footer button {
-      background: none;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      width: auto;
-    }
+    .footer { text-align: center; margin-top: 15px; }
+    .footer button { background: none; color: var(--text-muted); font-size: 0.8rem; width: auto; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🎰 قرعه‌کشی خانوادگی</h1>
-  <div class="status-online">🟢 متصل به دیتابیس لایو فایربیس</div>
+  <h1>🎰 خروجی خانه - قرعه‌کشی</h1>
+  <div class="status-online">🟢 متصل به دیتابیس آنلاین فامیل</div>
 
-  <!-- نمایشگر هیجان/برنده -->
+  <!-- نمایشگر نتیجه -->
   <div class="card">
-    <div class="slot-display" id="slot-screen">منتظر شروع قرعه‌کشی...</div>
+    <div class="slot-display" id="slot-screen">منتظر شروع...</div>
   </div>
 
-  <!-- پنل مدیر (مخفی) -->
+  <!-- پنل مدیریت سریع -->
   <div id="admin-panel" class="card" style="display: none; border-color: var(--primary);">
-    <div class="card-title" style="color: #60a5fa;">👑 پنل مدیریتی</div>
-    <input type="text" id="new-name" placeholder="نام فرد جدید...">
-    <button onclick="addMember()">+ ثبت نام جدید</button>
-    <button class="btn-admin" id="draw-btn" onclick="triggerOnlineDraw()" style="margin-top: 10px;">🎉 استارت هم‌زمان قرعه‌کشی برای همه</button>
+    <div class="card-title" style="color: #60a5fa;">👑 پنل مدیریت (ورود سریع)</div>
+    <input type="text" id="new-name" placeholder="نام جدید را بنویسید...">
+    <button onclick="addMember()">+ افزودن به لیست</button>
+    <button class="btn-admin" id="draw-btn" onclick="triggerOnlineDraw()" style="margin-top: 10px;">🎉 قرعه‌کشی آنلاین</button>
+    <button class="btn-clear-all" onclick="clearAllData()">🗑️ پاکسازی و حذف کامل همه اطلاعات</button>
   </div>
 
-  <!-- لیست حاضران -->
+  <!-- افراد حاضر -->
   <div class="card">
     <div class="card-title">
-      <span>📋 افراد حاضر</span>
+      <span>📋 افراد حاضر در خروجی خانه</span>
       <span id="active-count" style="color: #60a5fa; font-weight: bold;">0</span>
     </div>
     <ul id="active-list"></ul>
@@ -205,7 +173,7 @@
   </div>
 
   <div class="footer">
-    <button id="login-toggle" onclick="loginAdmin()">ورود مدیر</button>
+    <button id="login-toggle" onclick="loginAdmin()">ورود سریع مدیر</button>
   </div>
 </div>
 
@@ -213,7 +181,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  // تنظیمات اختصاصی فایربیس شما
   const firebaseConfig = {
     apiKey: "AIzaSyBOwqg1NbzaZZqARR-fygAJJmyPcOE6xPo",
     authDomain: "famil-lottery.firebaseapp.com",
@@ -229,12 +196,12 @@
   const db = getDatabase(app);
 
   let isAdmin = false;
-  const ADMIN_PASS = "1234";
+  const ADMIN_PASS = "594572"; // رمز اختصاصی شما
+  const ADMIN_SECRET_KEY = "594572";
 
   let activeMembers = [];
   let archivedMembers = [];
 
-  // همگام‌سازی لحظه‌ای با دیتابیس
   onValue(ref(db, 'lotteryData'), (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -245,19 +212,26 @@
       if (data.currentWinner) {
         showWinnerAnimation(data.currentWinner);
       }
+    } else {
+      activeMembers = [];
+      archivedMembers = [];
+      render();
     }
   });
 
-  function pushToDatabase() {
-    set(ref(db, 'lotteryData'), {
+  function pushToDatabase(currentWinnerName = null) {
+    const payload = {
       activeMembers: activeMembers,
       archivedMembers: archivedMembers,
+      adminKey: ADMIN_SECRET_KEY,
       timestamp: Date.now()
-    });
+    };
+    if (currentWinnerName) payload.currentWinner = currentWinnerName;
+    set(ref(db, 'lotteryData'), payload);
   }
 
   window.loginAdmin = function() {
-    const pass = prompt("رمز مدیر را وارد کنید:");
+    const pass = prompt("رمز ورود مدیر را وارد کنید:");
     if (pass === ADMIN_PASS) {
       isAdmin = true;
       document.getElementById('admin-panel').style.display = 'block';
@@ -284,6 +258,16 @@
     pushToDatabase();
   };
 
+  window.clearAllData = function() {
+    if (!isAdmin) return;
+    if (confirm("آیا از حذف کامل تمام اسامی و بایگانی برندگان مطمئن هستید؟")) {
+      activeMembers = [];
+      archivedMembers = [];
+      document.getElementById('slot-screen').innerText = "پاکسازی شد";
+      pushToDatabase();
+    }
+  };
+
   window.triggerOnlineDraw = function() {
     if (activeMembers.length === 0) {
       alert("لیست حاضران خالی است!");
@@ -299,12 +283,7 @@
     const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
     archivedMembers.unshift({ name: winner, time: timeStr });
 
-    set(ref(db, 'lotteryData'), {
-      activeMembers: activeMembers,
-      archivedMembers: archivedMembers,
-      currentWinner: winner,
-      timestamp: Date.now()
-    });
+    pushToDatabase(winner);
   };
 
   function showWinnerAnimation(winnerName) {
