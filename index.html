@@ -3,147 +3,210 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قرعه‌کشی خانوادگی</title>
+  <title>قرعه‌کشی شفاف خانوادگی</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
     :root {
-      --primary: #2c3e50;
-      --accent: #27ae60;
-      --bg: #f8f9fa;
-      --card-bg: #ffffff;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --primary: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
     }
+
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: #333;
+      background: var(--bg-gradient);
+      color: var(--text);
+      min-height: 100vh;
       margin: 0;
       padding: 20px;
       display: flex;
       justify-content: center;
+      align-items: center;
     }
+
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: var(--card-bg);
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 24px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
+
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       text-align: center;
-      color: var(--primary);
       margin-bottom: 20px;
+      background: linear-gradient(to right, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .section {
-      background: #f1f3f5;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
+
+    .card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
     }
-    .admin-panel {
-      border: 2px dashed #3498db;
-      background: #ebf5fb;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 6px 0;
-      border-radius: 8px;
-      border: 1px solid #ced4da;
-      box-sizing: border-box;
+
+    .card-title {
       font-size: 0.95rem;
-    }
-    button {
-      background-color: var(--accent);
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    .btn-danger {
-      background-color: #e74c3c;
-      width: auto;
-      padding: 4px 10px;
-      font-size: 0.8rem;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0 0;
-    }
-    li {
-      background: white;
-      padding: 10px 14px;
-      margin: 6px 0;
-      border-radius: 8px;
+      color: var(--text-muted);
+      margin-top: 0;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #e9ecef;
     }
-    .winner-item {
-      border-right: 4px solid var(--accent);
+
+    /* نمایشگر چرخشی برنده */
+    .slot-display {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+      background: #0f172a;
+      border-radius: 12px;
+      border: 2px solid #334155;
+      color: #f59e0b;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
     }
-    .time-badge {
+
+    input, button {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #0f172a;
+      color: var(--text);
+      box-sizing: border-box;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-admin {
+      background: var(--primary);
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      padding: 4px 10px;
+      width: auto;
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    li {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .badge {
       font-size: 0.75rem;
-      color: #6c757d;
-      background: #e9ecef;
-      padding: 3px 8px;
+      background: rgba(52, 211, 153, 0.1);
+      color: #34d399;
+      padding: 2px 8px;
       border-radius: 12px;
     }
-    .admin-toggle {
+
+    .footer {
       text-align: center;
       margin-top: 15px;
     }
-    .admin-toggle button {
+
+    .footer button {
       background: none;
-      color: #6c757d;
-      text-decoration: underline;
-      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      width: auto;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🎲 قرعه‌کشی خانوادگی</h1>
+  <h1>🎰 قرعه‌کشی خانوادگی</h1>
 
-  <!-- پنل مدیریت (پیش‌فرض مخفی) -->
-  <div id="admin-section" class="section admin-panel" style="display: none;">
-    <h3 style="margin-top:0;">👑 پنل مدیریت</h3>
-    <input type="text" id="new-name" placeholder="نام و نام خانوادگی فرد جدید...">
-    <button onclick="addMember()">+ افزودن به لیست</button>
-    <button onclick="runLottery()" style="background-color: #2980b9; margin-top: 10px;">🎉 استارت قرعه‌کشی</button>
+  <!-- نمایشگر هیجان/برنده -->
+  <div class="card">
+    <div class="slot-display" id="slot-screen">آماده قرعه‌کشی</div>
   </div>
 
-  <!-- لیست حاضران در قرعه‌کشی -->
-  <div class="section">
-    <h3 style="margin-top:0;">📋 افراد حاضر در قرعه‌کشی (<span id="active-count">0</span>)</h3>
+  <!-- پنل مدیر (مخفی) -->
+  <div id="admin-panel" class="card" style="display: none; border-color: var(--primary);">
+    <div class="card-title" style="color: #60a5fa;">👑 پنل مدیریتی</div>
+    <input type="text" id="new-name" placeholder="نام فرد جدید...">
+    <button onclick="addMember()">+ ثبت نام جدید</button>
+    <button class="btn-admin" id="draw-btn" onclick="startLotteryWithAnimation()" style="margin-top: 10px;">🎉 استارت چرخشی قرعه‌کشی</button>
+  </div>
+
+  <!-- لیست حاضران -->
+  <div class="card">
+    <div class="card-title">
+      <span>📋 افراد حاضر</span>
+      <span id="active-count" style="color: #60a5fa; font-weight: bold;">0</span>
+    </div>
     <ul id="active-list"></ul>
   </div>
 
   <!-- بایگانی برندگان -->
-  <div class="section">
-    <h3 style="margin-top:0;">🏆 بایگانی برندگان</h3>
+  <div class="card">
+    <div class="card-title">🏆 بایگانی برندگان</div>
     <ul id="archive-list"></ul>
   </div>
 
-  <!-- دکمه ورود مدیر -->
-  <div class="admin-toggle" id="login-btn-container">
-    <button onclick="loginAdmin()">ورود مدیر</button>
+  <div class="footer">
+    <button id="login-toggle" onclick="loginAdmin()">ورود مدیر</button>
   </div>
 </div>
 
 <script>
   let isAdmin = false;
-  // رمز ورود مدیر (می‌توانی تغییر دهی)
-  const ADMIN_PASS = "1234";
+  const ADMIN_PASS = "1234"; // رمز ورود مدیر
 
-  let activeMembers = JSON.parse(localStorage.getItem('activeMembers')) || ["علی", "مریم", "رضا", "سارا"];
+  let activeMembers = JSON.parse(localStorage.getItem('activeMembers')) || ["علی", "مریم", "رضا", "سارا", "نرگس", "امیر"];
   let archivedMembers = JSON.parse(localStorage.getItem('archivedMembers')) || [];
 
   function saveData() {
@@ -153,14 +216,14 @@
   }
 
   function loginAdmin() {
-    const pass = prompt("رمز عبور مدیر را وارد کنید:");
+    const pass = prompt("رمز مدیر را وارد کنید:");
     if (pass === ADMIN_PASS) {
       isAdmin = true;
-      document.getElementById('admin-section').style.display = 'block';
-      document.getElementById('login-btn-container').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+      document.getElementById('login-toggle').style.display = 'none';
       render();
     } else if (pass !== null) {
-      alert("رمز عبور اشتباه است!");
+      alert("رمز اشتباه است!");
     }
   }
 
@@ -180,29 +243,55 @@
     saveData();
   }
 
-  function runLottery() {
+  // انیمیشن چرخشی انتخاب برنده
+  function startLotteryWithAnimation() {
     if (activeMembers.length === 0) {
-      alert("هیچ فردی در لیست فعال وجود ندارد!");
+      alert("لیست حاضران خالی است!");
       return;
     }
 
-    // قرعه‌کشی با کریپتوگرافی مرورگر برای شانس ۱۰۰٪ برابر
+    const drawBtn = document.getElementById('draw-btn');
+    const screen = document.getElementById('slot-screen');
+    drawBtn.disabled = true;
+
+    // انتخاب برنده واقعی با کریپتو
     const array = new Uint32Array(1);
     window.crypto.getRandomValues(array);
     const randomIndex = array[0] % activeMembers.length;
-
     const winner = activeMembers[randomIndex];
-    activeMembers.splice(randomIndex, 1);
 
-    const date = new Date().toLocaleDateString('fa-IR') + ' - ' + new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-    archivedMembers.unshift({ name: winner, time: date });
+    let counter = 0;
+    const speed = 80;
+    const totalRuns = 25; // تعداد چرخش قبل ایستادن
 
-    saveData();
-    alert(`🎉 برنده قرعه‌کشی: ${winner}`);
+    const interval = setInterval(() => {
+      screen.innerText = activeMembers[counter % activeMembers.length];
+      counter++;
+
+      if (counter > totalRuns) {
+        clearInterval(interval);
+        // نمایش برنده نهایی
+        screen.innerText = "🎉 " + winner;
+        activeMembers.splice(randomIndex, 1);
+
+        const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+        archivedMembers.unshift({ name: winner, time: timeStr });
+        
+        saveData();
+        drawBtn.disabled = false;
+
+        // افکت کاغذ رنگی
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }, speed);
   }
 
   function render() {
-    // رندر لیست فعال
+    // لیست افراد فعال
     const activeUl = document.getElementById('active-list');
     activeUl.innerHTML = '';
     activeMembers.forEach((name, index) => {
@@ -212,13 +301,12 @@
     });
     document.getElementById('active-count').innerText = activeMembers.length;
 
-    // رندر لیست بایگانی
+    // لیست بایگانی
     const archiveUl = document.getElementById('archive-list');
     archiveUl.innerHTML = '';
     archivedMembers.forEach(item => {
       const li = document.createElement('li');
-      li.className = 'winner-item';
-      li.innerHTML = `<strong>${item.name}</strong> <span class="time-badge">${item.time}</span>`;
+      li.innerHTML = `<span>${item.name}</span> <span class="badge">${item.time}</span>`;
       archiveUl.appendChild(li);
     });
   }
