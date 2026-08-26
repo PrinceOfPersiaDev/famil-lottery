@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قرعه‌کشی آمریکایی - خروجی خانه</title>
+  <title>قرعه‌کشی گردونه‌ای - خروجی خانه</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -45,13 +45,7 @@
       position: relative;
     }
 
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     h1 { font-size: 1.4rem; margin: 0; font-weight: 700; }
     
     .btn-settings {
@@ -59,21 +53,13 @@
       border: 1px solid var(--glass-border);
       color: #fff;
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem;
     }
 
-    .status-online {
-      font-size: 0.75rem;
-      color: var(--accent-green);
-      text-align: center;
-      margin-bottom: 16px;
-    }
+    .status-online { font-size: 0.75rem; color: var(--accent-green); text-align: center; margin-bottom: 12px; }
 
     .glass-card {
       background: rgba(255, 255, 255, 0.04);
@@ -81,138 +67,117 @@
       border-radius: 20px;
       padding: 16px;
       margin-bottom: 14px;
+      position: relative;
     }
 
     .card-header {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      font-size: 0.9rem; color: var(--text-muted);
       margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
     }
 
     .prize-display {
-      text-align: center;
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: var(--accent-gold);
-      margin-bottom: 10px;
+      text-align: center; font-size: 1.1rem; font-weight: bold;
+      color: var(--accent-gold); margin-bottom: 10px;
       text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
 
-    .slot-display {
-      font-size: 1.6rem;
-      font-weight: 800;
-      text-align: center;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #ffd60a;
-      min-height: 50px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* گردونه شبیه qur3a.com */
+    .wheel-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 0 auto 10px auto;
     }
 
-    .winner-announcement {
-      font-size: 1.4rem;
-      color: #34c759;
-      animation: pulse 1s infinite alternate;
+    .wheel-pointer {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 24px solid var(--accent-red);
+      z-index: 5;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
     }
 
-    .prize-announcement {
-      font-size: 1rem;
-      color: var(--accent-gold);
-      margin-top: 6px;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.05); }
+    canvas#wheel {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
 
     input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
+      width: 100%; padding: 12px; border-radius: 12px;
       border: 1px solid var(--glass-border);
-      background: rgba(0, 0, 0, 0.3);
-      color: #fff;
-      box-sizing: border-box;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-      outline: none;
+      background: rgba(0, 0, 0, 0.3); color: #fff;
+      box-sizing: border-box; font-size: 0.95rem; margin-bottom: 8px; outline: none;
     }
 
     button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
+      width: 100%; padding: 12px; border-radius: 12px;
+      border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer;
     }
 
     .btn-primary { background: var(--accent-green); color: #fff; }
     .btn-admin { background: var(--accent-blue); color: #fff; margin-top: 6px; }
 
     .btn-delete-item {
-      width: 28px;
-      height: 28px;
-      min-width: 28px;
-      border-radius: 50%;
-      background: rgba(255, 69, 58, 0.2);
+      width: 28px; height: 28px; min-width: 28px;
+      border-radius: 50%; background: rgba(255, 69, 58, 0.2);
       border: 1px solid rgba(255, 69, 58, 0.4);
       color: var(--accent-red);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      cursor: pointer;
-      padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; padding: 0;
     }
 
-    ul { list-style: none; padding: 0; margin: 0; max-height: 180px; overflow-y: auto; }
+    ul { list-style: none; padding: 0; margin: 0; max-height: 160px; overflow-y: auto; }
     li {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 10px 14px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
+      padding: 10px 14px; border-radius: 12px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;
     }
 
     .drawer {
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 85%;
-      height: 100%;
-      background: rgba(28, 28, 30, 0.95);
-      backdrop-filter: blur(20px);
-      border-right: 1px solid var(--glass-border);
-      border-radius: 30px 0 0 30px;
-      padding: 20px;
-      box-sizing: border-box;
-      transition: left 0.3s ease;
-      z-index: 10;
+      position: absolute; top: 0; left: -100%; width: 85%; height: 100%;
+      background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border); border-radius: 30px 0 0 30px;
+      padding: 20px; box-sizing: border-box; transition: left 0.3s ease; z-index: 10;
     }
 
     .drawer.open { left: 0; }
     .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+    /* پاپ‌آپ برنده */
+    .winner-modal {
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+      border-radius: 30px; z-index: 20;
+      flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .winner-modal.active { display: flex; }
+    .winner-title { font-size: 1.8rem; color: var(--accent-green); font-weight: 800; margin-bottom: 8px; }
+    .winner-prize { font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 20px; }
   </style>
 </head>
 <body>
 
 <div class="container" id="main-card">
-  <!-- تنظیمات کشویی از چپ -->
+  
+  <!-- پاپ‌آپ نمایش برنده به سبک qur3a -->
+  <div class="winner-modal" id="winner-modal">
+    <div style="font-size: 3rem;">🎉</div>
+    <div class="winner-title" id="modal-winner-name">علی محمدی</div>
+    <div class="winner-prize" id="modal-winner-prize">💰 جایزه: ۴۰,۰۰۰,۰۰۰ تومان</div>
+    <button class="btn-primary" onclick="closeWinnerModal()">تایید و بستن</button>
+  </div>
+
+  <!-- منوی تنظیمات کشویی -->
   <div class="drawer" id="settings-drawer">
     <div class="drawer-header">
       <h3>⚙️ تنظیمات مدیریت</h3>
@@ -228,33 +193,36 @@
   </div>
 
   <div class="header-bar">
-    <h1>🎰 قرعه‌کشی خانوادگی</h1>
+    <h1>🎰 قرعه‌کشی گردونه‌ای</h1>
     <button class="btn-settings" onclick="toggleDrawer()">⚙️</button>
   </div>
-  <div class="status-online">🟢 سیستم فعال لایو</div>
+  <div class="status-online">🟢 متصل به گردونه آنلاین (qur3a style)</div>
 
-  <!-- نمایشگر مبلغ جایزه و برنده -->
+  <!-- گردونه قرعه کشی -->
   <div class="glass-card">
     <div class="prize-display" id="prize-header">🎁 جایزه: ۴۰,۰۰۰,۰۰۰ تومان</div>
-    <div class="slot-display" id="slot-screen">منتظر شروع...</div>
+    <div class="wheel-container">
+      <div class="wheel-pointer"></div>
+      <canvas id="wheel" width="500" height="500"></canvas>
+    </div>
   </div>
 
   <!-- پنل مدیریت -->
   <div id="admin-panel" class="glass-card" style="display: none; border-color: rgba(10, 132, 255, 0.4);">
-    <div class="card-header" style="color: var(--accent-blue);">👑 پنل تنظیم قرعه‌کشی</div>
+    <div class="card-header" style="color: var(--accent-blue);">👑 پنل تنظیمات مدیر</div>
     
     <label style="font-size: 0.8rem; color: var(--text-muted);">تعیین مبلغ جایزه:</label>
     <input type="text" id="prize-input" placeholder="مثلاً: ۴۰ میلیون تومان" value="۴۰,۰۰۰,۰۰۰ تومان">
 
     <label style="font-size: 0.8rem; color: var(--text-muted);">افزودن فرد جدید:</label>
     <input type="text" id="new-name" placeholder="نام و نام خانوادگی...">
-    <button class="btn-primary" onclick="addMember()">+ افزودن نام</button>
-    <button class="btn-admin" onclick="triggerOnlineDraw()">🎉 شروع قرعه‌کشی هیجان‌انگیز</button>
+    <button class="btn-primary" onclick="addMember()">+ افزودن به گردونه</button>
+    <button class="btn-admin" onclick="triggerOnlineDraw()">🎡 لَف العَجَلَة (چرخاندن گردونه)</button>
   </div>
 
   <div class="glass-card">
     <div class="card-header">
-      <span>📋 افراد حاضر</span>
+      <span>📋 افراد روی گردونه</span>
       <span id="active-count" style="color: var(--accent-blue); font-weight: bold;">0</span>
     </div>
     <ul id="active-list"></ul>
@@ -290,10 +258,27 @@
 
   let isAdmin = false;
   let ADMIN_PASS = "594572";
-  let spinDuration = 45; // زمان چرخش برحسب ثانیه
+  let spinDuration = 45;
   let activeMembers = [];
   let archivedMembers = [];
   let currentPrize = "۴۰,۰۰۰,۰۰۰ تومان";
+
+  // ساخت صدای چرخیدن چرخنده به‌صورت Web Audio API بدون نیاز به فایل خارجی
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playClickSound() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  }
 
   onValue(ref(db, 'lotteryData'), (snapshot) => {
     const data = snapshot.val();
@@ -306,15 +291,16 @@
           document.getElementById('prize-header').innerText = `🎁 جایزه: ${currentPrize}`;
         }
         render();
+        drawWheel();
       }
 
       if (data.currentWinner) {
-        showWinnerAnimation(data.currentWinner, data.prize || currentPrize);
+        startWheelSpin(data.winnerIndex, data.currentWinner, data.prize || currentPrize);
       }
     }
   });
 
-  function pushToDatabase(currentWinnerName = null) {
+  function pushToDatabase(winnerData = null) {
     const payload = {
       activeMembers: activeMembers,
       archivedMembers: archivedMembers,
@@ -322,8 +308,56 @@
       adminKey: "594572",
       timestamp: Date.now()
     };
-    if (currentWinnerName) payload.currentWinner = currentWinnerName;
+    if (winnerData) {
+      payload.currentWinner = winnerData.name;
+      payload.winnerIndex = winnerData.index;
+    }
     set(ref(db, 'lotteryData'), payload);
+  }
+
+  // رسم گردونه رو Canvas
+  const colors = ["#ff453a", "#0a84ff", "#30d158", "#ffd60a", "#bf5af2", "#ff9f0a", "#64d2ff"];
+  let startAngle = 0;
+
+  function drawWheel() {
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const numOptions = activeMembers.length;
+    const radius = 250;
+
+    ctx.clearRect(0, 0, 500, 500);
+
+    if (numOptions === 0) {
+      ctx.beginPath();
+      ctx.arc(250, 250, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = "rgba(255,255,255,0.05)";
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 20px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("اسامی را وارد کنید", 250, 255);
+      return;
+    }
+
+    const arcSize = (2 * Math.PI) / numOptions;
+    for (let i = 0; i < numOptions; i++) {
+      const angle = startAngle + i * arcSize;
+      ctx.beginPath();
+      ctx.arc(250, 250, radius, angle, angle + arcSize);
+      ctx.lineTo(250, 250);
+      ctx.fillStyle = colors[i % colors.length];
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(250, 250);
+      ctx.rotate(angle + arcSize / 2);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText(activeMembers[i], radius - 20, 6);
+      ctx.restore();
+    }
   }
 
   window.toggleDrawer = function() {
@@ -334,12 +368,8 @@
     const newPass = document.getElementById('admin-pass-input').value;
     const newDuration = parseInt(document.getElementById('spin-duration-input').value);
     
-    if (newPass.trim() !== '') {
-      ADMIN_PASS = newPass.trim();
-    }
-    if (newDuration >= 5 && newDuration <= 60) {
-      spinDuration = newDuration;
-    }
+    if (newPass.trim() !== '') ADMIN_PASS = newPass.trim();
+    if (newDuration >= 5 && newDuration <= 60) spinDuration = newDuration;
     alert("تنظیمات اعمال شد!");
     toggleDrawer();
   };
@@ -363,6 +393,7 @@
       activeMembers.push(name);
       input.value = '';
       render();
+      drawWheel();
       pushToDatabase();
     }
   };
@@ -371,6 +402,7 @@
     if (!isAdmin) return;
     activeMembers.splice(index, 1);
     render();
+    drawWheel();
     pushToDatabase();
   };
 
@@ -390,66 +422,65 @@
     const prizeInput = document.getElementById('prize-input').value.trim();
     if (prizeInput) currentPrize = prizeInput;
 
-    const randomIndex = Math.floor(Math.random() * activeMembers.length);
-    const winner = activeMembers[randomIndex];
+    const winnerIndex = Math.floor(Math.random() * activeMembers.length);
+    const winner = activeMembers[winnerIndex];
 
-    activeMembers.splice(randomIndex, 1);
-    const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
-    archivedMembers.unshift({ name: winner, prize: currentPrize, time: timeStr });
-
-    pushToDatabase(winner);
+    pushToDatabase({ name: winner, index: winnerIndex });
   };
 
-  // افکت‌های خوشحالی و انیمیشن برنده
-  function triggerCelebration() {
-    const duration = 3 * 1000;
-    const end = Date.now() + duration;
+  let isSpinning = false;
+  function startWheelSpin(winnerIndex, winnerName, prizeAmount) {
+    if (isSpinning) return;
+    isSpinning = true;
 
-    (function frame() {
-      confetti({
-        particleCount: 7,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 }
-      });
-      confetti({
-        particleCount: 7,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 }
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    })();
-  }
-
-  function showWinnerAnimation(winnerName, prizeAmount) {
-    const screen = document.getElementById('slot-screen');
-    let counter = 0;
-    const speed = 70;
-    const totalDuration = spinDuration * 1000;
+    const numOptions = activeMembers.length;
+    const arcSize = (2 * Math.PI) / numOptions;
+    const targetAngle = (3 * Math.PI / 2) - (winnerIndex * arcSize + arcSize / 2);
+    
+    const extraRounds = 8 * 2 * Math.PI; 
+    const finalAngle = extraRounds + targetAngle;
+    
     const startTime = Date.now();
+    const duration = spinDuration * 1000;
+    let lastSoundAngle = 0;
 
-    const interval = setInterval(() => {
-      if(activeMembers.length > 0) {
-        screen.innerHTML = `<span>${activeMembers[counter % activeMembers.length]}</span>`;
+    const spinInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      const easeOut = 1 - Math.pow(1 - progress, 4);
+      startAngle = easeOut * finalAngle;
+      
+      if (Math.abs(startAngle - lastSoundAngle) > arcSize) {
+        playClickSound();
+        lastSoundAngle = startAngle;
       }
-      counter++;
 
-      if (Date.now() - startTime >= totalDuration) {
-        clearInterval(interval);
-        
-        // نمایش برنده با مبلغ جایزه
-        screen.innerHTML = `
-          <div class="winner-announcement">🎉 برنده: ${winnerName}</div>
-          <div class="prize-announcement">💰 مبلغ جایزه: ${prizeAmount}</div>
-        `;
-        
-        triggerCelebration();
+      drawWheel();
 
-        // اسکرین‌شات اتوماتیک پس از اعلام برنده
+      if (progress >= 1) {
+        clearInterval(spinInterval);
+        isSpinning = false;
+        
+        // حذف اتوماتیک برنده از گردونه و افزودن به بایگانی
+        const indexInActive = activeMembers.indexOf(winnerName);
+        if (indexInActive > -1) {
+          activeMembers.splice(indexInActive, 1);
+        }
+        const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+        archivedMembers.unshift({ name: winnerName, prize: prizeAmount, time: timeStr });
+        
+        render();
+        drawWheel();
+
+        // باز شدن پاپ‌آپ برنده شبیه qur3a
+        document.getElementById('modal-winner-name').innerText = `🎉 برنده: ${winnerName}`;
+        document.getElementById('modal-winner-prize').innerText = `💰 مبلغ جایزه: ${prizeAmount}`;
+        document.getElementById('winner-modal').classList.add('active');
+
+        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+
+        // اسکرین‌شات اتوماتیک
         setTimeout(() => {
           html2canvas(document.getElementById('main-card')).then(canvas => {
             const link = document.createElement('a');
@@ -457,10 +488,14 @@
             link.href = canvas.toDataURL();
             link.click();
           });
-        }, 1500);
+        }, 1200);
       }
-    }, speed);
+    }, 16);
   }
+
+  window.closeWinnerModal = function() {
+    document.getElementById('winner-modal').classList.remove('active');
+  };
 
   function render() {
     const activeUl = document.getElementById('active-list');
