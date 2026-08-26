@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>خروجی خانه - قرعه‌کشی خانوادگی</title>
+  <title>قرعه‌کشی آمریکایی - خروجی خانه</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -13,6 +13,7 @@
       --accent-green: #34c759;
       --accent-blue: #0a84ff;
       --accent-red: #ff453a;
+      --accent-gold: #ffd700;
       --text: #ffffff;
       --text-muted: rgba(255, 255, 255, 0.6);
     }
@@ -91,6 +92,15 @@
       align-items: center;
     }
 
+    .prize-display {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent-gold);
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    }
+
     .slot-display {
       font-size: 1.6rem;
       font-weight: 800;
@@ -100,10 +110,28 @@
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: #ffd60a;
-      min-height: 40px;
+      min-height: 50px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+
+    .winner-announcement {
+      font-size: 1.4rem;
+      color: #34c759;
+      animation: pulse 1s infinite alternate;
+    }
+
+    .prize-announcement {
+      font-size: 1rem;
+      color: var(--accent-gold);
+      margin-top: 6px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
     }
 
     input {
@@ -161,12 +189,11 @@
       font-size: 0.9rem;
     }
 
-    /* Drawer چپ برای تنظیمات */
     .drawer {
       position: absolute;
       top: 0;
       left: -100%;
-      width: 80%;
+      width: 85%;
       height: 100%;
       background: rgba(28, 28, 30, 0.95);
       backdrop-filter: blur(20px);
@@ -185,15 +212,15 @@
 <body>
 
 <div class="container" id="main-card">
-  <!-- منوی کشویی تنظیمات (از چپ باز می‌شود) -->
+  <!-- تنظیمات کشویی از چپ -->
   <div class="drawer" id="settings-drawer">
     <div class="drawer-header">
-      <h3>⚙️ تنظیمات</h3>
+      <h3>⚙️ تنظیمات مدیریت</h3>
       <button class="btn-delete-item" onclick="toggleDrawer()">✕</button>
     </div>
-    <label style="font-size: 0.85rem; color: var(--text-muted);">تغییر نام کاربری مدیر:</label>
-    <input type="text" id="admin-username-input" value="مدیر اصلی">
-    
+    <label style="font-size: 0.85rem; color: var(--text-muted);">زمان چرخش (ثانیه - حداکثر ۶۰):</label>
+    <input type="number" id="spin-duration-input" value="45" min="5" max="60">
+
     <label style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; display:block;">تغییر رمز عبور:</label>
     <input type="password" id="admin-pass-input" placeholder="رمز جدید...">
     
@@ -201,20 +228,28 @@
   </div>
 
   <div class="header-bar">
-    <h1>🎰 خروجی خانه</h1>
+    <h1>🎰 قرعه‌کشی خانوادگی</h1>
     <button class="btn-settings" onclick="toggleDrawer()">⚙️</button>
   </div>
-  <div class="status-online">🟢 متصل به دیتابیس لایو</div>
+  <div class="status-online">🟢 سیستم فعال لایو</div>
 
+  <!-- نمایشگر مبلغ جایزه و برنده -->
   <div class="glass-card">
+    <div class="prize-display" id="prize-header">🎁 جایزه: ۴۰,۰۰۰,۰۰۰ تومان</div>
     <div class="slot-display" id="slot-screen">منتظر شروع...</div>
   </div>
 
+  <!-- پنل مدیریت -->
   <div id="admin-panel" class="glass-card" style="display: none; border-color: rgba(10, 132, 255, 0.4);">
-    <div class="card-header" style="color: var(--accent-blue);">👑 پنل مدیریت</div>
-    <input type="text" id="new-name" placeholder="نام فرد جدید...">
+    <div class="card-header" style="color: var(--accent-blue);">👑 پنل تنظیم قرعه‌کشی</div>
+    
+    <label style="font-size: 0.8rem; color: var(--text-muted);">تعیین مبلغ جایزه:</label>
+    <input type="text" id="prize-input" placeholder="مثلاً: ۴۰ میلیون تومان" value="۴۰,۰۰۰,۰۰۰ تومان">
+
+    <label style="font-size: 0.8rem; color: var(--text-muted);">افزودن فرد جدید:</label>
+    <input type="text" id="new-name" placeholder="نام و نام خانوادگی...">
     <button class="btn-primary" onclick="addMember()">+ افزودن نام</button>
-    <button class="btn-admin" onclick="triggerOnlineDraw()">🎉 شروع قرعه‌کشی (۴۵ ثانیه‌ای)</button>
+    <button class="btn-admin" onclick="triggerOnlineDraw()">🎉 شروع قرعه‌کشی هیجان‌انگیز</button>
   </div>
 
   <div class="glass-card">
@@ -255,21 +290,26 @@
 
   let isAdmin = false;
   let ADMIN_PASS = "594572";
+  let spinDuration = 45; // زمان چرخش برحسب ثانیه
   let activeMembers = [];
   let archivedMembers = [];
+  let currentPrize = "۴۰,۰۰۰,۰۰۰ تومان";
 
   onValue(ref(db, 'lotteryData'), (snapshot) => {
     const data = snapshot.val();
     if (data) {
-      // جلوگیری از پاک شدن ورودی موقع تایپ
-      if (document.activeElement.id !== 'new-name') {
+      if (document.activeElement.id !== 'new-name' && document.activeElement.id !== 'prize-input') {
         activeMembers = data.activeMembers || [];
         archivedMembers = data.archivedMembers || [];
+        if (data.prize) {
+          currentPrize = data.prize;
+          document.getElementById('prize-header').innerText = `🎁 جایزه: ${currentPrize}`;
+        }
         render();
       }
 
       if (data.currentWinner) {
-        showWinnerAnimation(data.currentWinner);
+        showWinnerAnimation(data.currentWinner, data.prize || currentPrize);
       }
     }
   });
@@ -278,6 +318,7 @@
     const payload = {
       activeMembers: activeMembers,
       archivedMembers: archivedMembers,
+      prize: currentPrize,
       adminKey: "594572",
       timestamp: Date.now()
     };
@@ -291,10 +332,15 @@
 
   window.saveSettings = function() {
     const newPass = document.getElementById('admin-pass-input').value;
+    const newDuration = parseInt(document.getElementById('spin-duration-input').value);
+    
     if (newPass.trim() !== '') {
       ADMIN_PASS = newPass.trim();
-      alert("رمز جدید ثبت شد!");
     }
+    if (newDuration >= 5 && newDuration <= 60) {
+      spinDuration = newDuration;
+    }
+    alert("تنظیمات اعمال شد!");
     toggleDrawer();
   };
 
@@ -341,33 +387,67 @@
       return;
     }
 
+    const prizeInput = document.getElementById('prize-input').value.trim();
+    if (prizeInput) currentPrize = prizeInput;
+
     const randomIndex = Math.floor(Math.random() * activeMembers.length);
     const winner = activeMembers[randomIndex];
 
     activeMembers.splice(randomIndex, 1);
     const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
-    archivedMembers.unshift({ name: winner, time: timeStr });
+    archivedMembers.unshift({ name: winner, prize: currentPrize, time: timeStr });
 
     pushToDatabase(winner);
   };
 
-  function showWinnerAnimation(winnerName) {
+  // افکت‌های خوشحالی و انیمیشن برنده
+  function triggerCelebration() {
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      confetti({
+        particleCount: 7,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      confetti({
+        particleCount: 7,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+
+  function showWinnerAnimation(winnerName, prizeAmount) {
     const screen = document.getElementById('slot-screen');
     let counter = 0;
-    const speed = 80;
-    const totalDuration = 45000; // دقیقاً ۴۵ ثانیه
+    const speed = 70;
+    const totalDuration = spinDuration * 1000;
     const startTime = Date.now();
 
     const interval = setInterval(() => {
       if(activeMembers.length > 0) {
-        screen.innerText = activeMembers[counter % activeMembers.length];
+        screen.innerHTML = `<span>${activeMembers[counter % activeMembers.length]}</span>`;
       }
       counter++;
 
       if (Date.now() - startTime >= totalDuration) {
         clearInterval(interval);
-        screen.innerText = "🎉 " + winnerName;
-        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+        
+        // نمایش برنده با مبلغ جایزه
+        screen.innerHTML = `
+          <div class="winner-announcement">🎉 برنده: ${winnerName}</div>
+          <div class="prize-announcement">💰 مبلغ جایزه: ${prizeAmount}</div>
+        `;
+        
+        triggerCelebration();
 
         // اسکرین‌شات اتوماتیک پس از اعلام برنده
         setTimeout(() => {
@@ -377,7 +457,7 @@
             link.href = canvas.toDataURL();
             link.click();
           });
-        }, 1200);
+        }, 1500);
       }
     }, speed);
   }
@@ -396,7 +476,7 @@
     archiveUl.innerHTML = '';
     archivedMembers.forEach((item, index) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span>${item.name}</span> ${isAdmin ? `<button class="btn-delete-item" onclick="removeArchivedMember(${index})">✕</button>` : ''}`;
+      li.innerHTML = `<span>${item.name} (${item.prize || 'جایزه'})</span> ${isAdmin ? `<button class="btn-delete-item" onclick="removeArchivedMember(${index})">✕</button>` : ''}`;
       archiveUl.appendChild(li);
     });
   }
