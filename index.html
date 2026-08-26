@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>قرعه‌کشی شفاف خانوادگی</title>
+  <title>قرعه‌کشی آنلاین و شفاف خانوادگی</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
     :root {
@@ -42,10 +42,17 @@
     h1 {
       font-size: 1.6rem;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       background: linear-gradient(to right, #60a5fa, #34d399);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .status-online {
+      font-size: 0.75rem;
+      color: #34d399;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
     .card {
@@ -66,7 +73,6 @@
       align-items: center;
     }
 
-    /* نمایشگر چرخشی برنده */
     .slot-display {
       font-size: 1.8rem;
       font-weight: bold;
@@ -168,10 +174,11 @@
 
 <div class="container">
   <h1>🎰 قرعه‌کشی خانوادگی</h1>
+  <div class="status-online">🟢 متصل به دیتابیس لایو فایربیس</div>
 
   <!-- نمایشگر هیجان/برنده -->
   <div class="card">
-    <div class="slot-display" id="slot-screen">آماده قرعه‌کشی</div>
+    <div class="slot-display" id="slot-screen">منتظر شروع قرعه‌کشی...</div>
   </div>
 
   <!-- پنل مدیر (مخفی) -->
@@ -179,7 +186,7 @@
     <div class="card-title" style="color: #60a5fa;">👑 پنل مدیریتی</div>
     <input type="text" id="new-name" placeholder="نام فرد جدید...">
     <button onclick="addMember()">+ ثبت نام جدید</button>
-    <button class="btn-admin" id="draw-btn" onclick="startLotteryWithAnimation()" style="margin-top: 10px;">🎉 استارت چرخشی قرعه‌کشی</button>
+    <button class="btn-admin" id="draw-btn" onclick="triggerOnlineDraw()" style="margin-top: 10px;">🎉 استارت هم‌زمان قرعه‌کشی برای همه</button>
   </div>
 
   <!-- لیست حاضران -->
@@ -202,20 +209,54 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // تنظیمات اختصاصی فایربیس شما
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOwqg1NbzaZZqARR-fygAJJmyPcOE6xPo",
+    authDomain: "famil-lottery.firebaseapp.com",
+    databaseURL: "https://famil-lottery-default-rtdb.firebaseio.com",
+    projectId: "famil-lottery",
+    storageBucket: "famil-lottery.firebasestorage.app",
+    messagingSenderId: "814960622704",
+    appId: "1:814960622704:web:572e36a3a543df2626c8b5",
+    measurementId: "G-5QBMWCNECX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
   let isAdmin = false;
-  const ADMIN_PASS = "1234"; // رمز ورود مدیر
+  const ADMIN_PASS = "1234";
 
-  let activeMembers = JSON.parse(localStorage.getItem('activeMembers')) || ["علی", "مریم", "رضا", "سارا", "نرگس", "امیر"];
-  let archivedMembers = JSON.parse(localStorage.getItem('archivedMembers')) || [];
+  let activeMembers = [];
+  let archivedMembers = [];
 
-  function saveData() {
-    localStorage.setItem('activeMembers', JSON.stringify(activeMembers));
-    localStorage.setItem('archivedMembers', JSON.stringify(archivedMembers));
-    render();
+  // همگام‌سازی لحظه‌ای با دیتابیس
+  onValue(ref(db, 'lotteryData'), (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      activeMembers = data.activeMembers || [];
+      archivedMembers = data.archivedMembers || [];
+      render();
+
+      if (data.currentWinner) {
+        showWinnerAnimation(data.currentWinner);
+      }
+    }
+  });
+
+  function pushToDatabase() {
+    set(ref(db, 'lotteryData'), {
+      activeMembers: activeMembers,
+      archivedMembers: archivedMembers,
+      timestamp: Date.now()
+    });
   }
 
-  function loginAdmin() {
+  window.loginAdmin = function() {
     const pass = prompt("رمز مدیر را وارد کنید:");
     if (pass === ADMIN_PASS) {
       isAdmin = true;
@@ -225,73 +266,68 @@
     } else if (pass !== null) {
       alert("رمز اشتباه است!");
     }
-  }
+  };
 
-  function addMember() {
+  window.addMember = function() {
     const input = document.getElementById('new-name');
     const name = input.value.trim();
     if (name) {
       activeMembers.push(name);
       input.value = '';
-      saveData();
+      pushToDatabase();
     }
-  }
+  };
 
-  function removeMember(index) {
+  window.removeMember = function(index) {
     if (!isAdmin) return;
     activeMembers.splice(index, 1);
-    saveData();
-  }
+    pushToDatabase();
+  };
 
-  // انیمیشن چرخشی انتخاب برنده
-  function startLotteryWithAnimation() {
+  window.triggerOnlineDraw = function() {
     if (activeMembers.length === 0) {
       alert("لیست حاضران خالی است!");
       return;
     }
 
-    const drawBtn = document.getElementById('draw-btn');
-    const screen = document.getElementById('slot-screen');
-    drawBtn.disabled = true;
-
-    // انتخاب برنده واقعی با کریپتو
     const array = new Uint32Array(1);
     window.crypto.getRandomValues(array);
     const randomIndex = array[0] % activeMembers.length;
     const winner = activeMembers[randomIndex];
 
+    activeMembers.splice(randomIndex, 1);
+    const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+    archivedMembers.unshift({ name: winner, time: timeStr });
+
+    set(ref(db, 'lotteryData'), {
+      activeMembers: activeMembers,
+      archivedMembers: archivedMembers,
+      currentWinner: winner,
+      timestamp: Date.now()
+    });
+  };
+
+  function showWinnerAnimation(winnerName) {
+    const screen = document.getElementById('slot-screen');
     let counter = 0;
-    const speed = 80;
-    const totalRuns = 25; // تعداد چرخش قبل ایستادن
+    const speed = 70;
+    const totalRuns = 22;
 
     const interval = setInterval(() => {
-      screen.innerText = activeMembers[counter % activeMembers.length];
+      if(activeMembers.length > 0) {
+        screen.innerText = activeMembers[counter % activeMembers.length];
+      }
       counter++;
 
       if (counter > totalRuns) {
         clearInterval(interval);
-        // نمایش برنده نهایی
-        screen.innerText = "🎉 " + winner;
-        activeMembers.splice(randomIndex, 1);
-
-        const timeStr = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
-        archivedMembers.unshift({ name: winner, time: timeStr });
-        
-        saveData();
-        drawBtn.disabled = false;
-
-        // افکت کاغذ رنگی
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
+        screen.innerText = "🎉 " + winnerName;
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       }
     }, speed);
   }
 
   function render() {
-    // لیست افراد فعال
     const activeUl = document.getElementById('active-list');
     activeUl.innerHTML = '';
     activeMembers.forEach((name, index) => {
@@ -301,7 +337,6 @@
     });
     document.getElementById('active-count').innerText = activeMembers.length;
 
-    // لیست بایگانی
     const archiveUl = document.getElementById('archive-list');
     archiveUl.innerHTML = '';
     archivedMembers.forEach(item => {
@@ -310,8 +345,6 @@
       archiveUl.appendChild(li);
     });
   }
-
-  render();
 </script>
 
 </body>
